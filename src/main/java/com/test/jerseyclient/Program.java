@@ -22,6 +22,7 @@ public class Program implements CommandLineRunner {
     public static void main(String[] args) throws IOException {
         System.out.println("Starting program");
 
+
         System.out.println("*****************USERS*****************");
         testGetAllUsers();
         System.out.println("*****************TEAMS*****************");
@@ -30,6 +31,10 @@ public class Program implements CommandLineRunner {
         testGetAllWorkItems();
         System.out.println("*****************Added USER*****************");
         testAddUser();
+        System.out.println("*****************UPDATED WORKITEM*****************");
+        testUpdateWorkItem();
+        System.out.println("*****************ISSUE CREATED*****************");
+        testCreateIssue();
     }
 
 
@@ -100,5 +105,50 @@ public class Program implements CommandLineRunner {
         System.out.println(response.getHeaders());
 
     }
+
+
+
+    private static void testUpdateWorkItem() throws IOException {
+
+        Client client = ClientBuilder.newClient();
+        Invocation.Builder builder = client
+                .target("http://localhost:8080/workitems/20")
+                .queryParam("user", "945")
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Jasse");
+
+        String input = "{\"description\":\"TEST:UPPDATERAD\",\"workItemStatus\":\"DONE\"}";
+
+        Response response = builder.put(Entity.json(input));
+        System.out.println(response.getHeaders());
+
+    }
+
+
+
+    private static void testCreateIssue() throws IOException {
+
+        Client client = ClientBuilder.newClient();
+        Invocation.Builder builder = client
+                .target("http://localhost:8080/issues")
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Jasse");
+
+        String input =
+                "{" +
+                        "\"description\": \"HEJHEJ\"," +
+                        "\"workItem\": {" +
+                            "\"id\": \"22\"" +
+                        "}" +
+                "}";
+
+        Response response = builder.post(Entity.json(input));
+
+        System.out.println(response.getHeaders());
+        System.out.println(response.readEntity(String.class));
+
+    }
+
+
 
 }
